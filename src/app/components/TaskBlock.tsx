@@ -10,9 +10,10 @@ const StyledTaskBlock = styled('div')`
 
 type Props = {
   task: TaskType;
+  updateState: (isTaskListUpdated: boolean) => void;
 }
 
-const TaskBlock: React.FC<Props> = ({task}) => {
+const TaskBlock: React.FC<Props> = ({task, updateState}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const onChange = () => {
     console.log("task status changed");
@@ -21,6 +22,7 @@ const TaskBlock: React.FC<Props> = ({task}) => {
   const onTaskDelete = (taskId: number) => {
     console.log("task deleted");
     deleteTask(taskId);
+    updateState(true);
   }
 
   const changeEditMode = () => {

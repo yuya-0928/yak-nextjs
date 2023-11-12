@@ -4,8 +4,12 @@ import TaskBlock from "./TaskBlock";
 import { TaskType } from "../types/TaskType";
 import getActiveTasks from "../services/indexedDB/getActiveTasks";
 
+type Props = {
+  onTaskListUpdated: boolean;
+  updateState: (isTaskListUpdated: boolean) => void;
+}
 
-const TaskList = () => {
+const TaskList = ({onTaskListUpdated, updateState}: Props) => {
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   useEffect(() => {
@@ -17,7 +21,8 @@ const TaskList = () => {
         console.error(err);
       }
     })();
-  }, [])
+    updateState(false)
+  }, [onTaskListUpdated, updateState])
 
   useEffect(() => {
     console.log(tasks);
@@ -27,7 +32,7 @@ const TaskList = () => {
     <div>
       {tasks.map((task) => (
         <div key={task.id}>
-          <TaskBlock task={task} />
+          <TaskBlock task={task} updateState={updateState}  />
         </div>
       ))}
     </div>
