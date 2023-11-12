@@ -2,7 +2,11 @@
 import accessDB from "../services/indexedDB/accessDB";
 import addTask from "../services/indexedDB/addTask";
 
-const TaskForm = () => {
+type Props = {
+  onSetTask: (isTaskListUpdated: boolean) => void;
+}
+
+const TaskForm = ({onSetTask}: Props) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -17,6 +21,7 @@ const TaskForm = () => {
         return;
       }
       addTask(DBOpenRequest, taskName);
+      onSetTask(true);
     }
   }
   
