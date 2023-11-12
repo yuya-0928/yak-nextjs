@@ -13,10 +13,12 @@ const getActiveTasks = () => {
       const objectStoreRequest = index.getAll(IDBKeyRange.only(0));
       objectStoreRequest.onsuccess = () => {
         resolve(objectStoreRequest.result);
+        db.close();
       }
 
       objectStoreRequest.onerror = (err) => {
         reject(err);
+        db.close();
       }
     }
 
