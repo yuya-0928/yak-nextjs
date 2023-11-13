@@ -1,16 +1,14 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TaskBlock from "./TaskBlock";
 import { TaskType } from "../types/TaskType";
 import getActiveTasks from "../services/indexedDB/getActiveTasks";
+import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 
-type Props = {
-  onTaskListUpdated: boolean;
-  updateState: (isTaskListUpdated: boolean) => void;
-}
 
-const TaskList = ({onTaskListUpdated, updateState}: Props) => {
+const TaskList = () => {
   const [tasks, setTasks] = useState<TaskType[]>([]);
+  const {isTaskListUpdated, setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
 
   useEffect(() => {
     (async () => {
@@ -21,8 +19,8 @@ const TaskList = ({onTaskListUpdated, updateState}: Props) => {
         console.error(err);
       }
     })();
-    updateState(false)
-  }, [onTaskListUpdated, updateState])
+    setIsTaskListUpdated(false)
+  }, [isTaskListUpdated, setIsTaskListUpdated])
 
   useEffect(() => {
     console.log(tasks);
@@ -32,7 +30,7 @@ const TaskList = ({onTaskListUpdated, updateState}: Props) => {
     <div>
       {tasks.map((task) => (
         <div key={task.id}>
-          <TaskBlock task={task} updateState={updateState}  />
+          <TaskBlock task={task} />
         </div>
       ))}
     </div>
