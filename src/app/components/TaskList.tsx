@@ -22,10 +22,6 @@ const TaskList = () => {
     setIsTaskListUpdated(false)
   }, [isTaskListUpdated, setIsTaskListUpdated])
 
-  useEffect(() => {
-    console.log(tasks);
-  }, [tasks])
-
   return (
     <div>
       {tasks.map((task) => (
