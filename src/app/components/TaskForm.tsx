@@ -1,12 +1,13 @@
 'use client'
+import { useContext } from "react";
 import accessDB from "../services/indexedDB/accessDB";
 import addTask from "../services/indexedDB/addTask";
+import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 
-type Props = {
-  onSetTask: (isTaskListUpdated: boolean) => void;
-}
 
-const TaskForm = ({onSetTask}: Props) => {
+const TaskForm = () => {
+  const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -17,11 +18,12 @@ const TaskForm = ({onSetTask}: Props) => {
     DBOpenRequest.onsuccess = () => {
       const taskName = formData.get("taskName");
       if (!taskName) {
-        console.log("no task name")
+        // TODO: エラーメッセージをFormの下に表示する
+        console.error("no task name")
         return;
       }
       addTask(DBOpenRequest, taskName);
-      onSetTask(true);
+      setIsTaskListUpdated(true);
     }
   }
   

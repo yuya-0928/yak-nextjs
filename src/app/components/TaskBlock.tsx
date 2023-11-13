@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { TaskType } from "../types/TaskType";
 import deleteTask from "../services/indexedDB/deleteTask";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -10,11 +11,11 @@ const StyledTaskBlock = styled('div')`
 
 type Props = {
   task: TaskType;
-  updateState: (isTaskListUpdated: boolean) => void;
 }
 
-const TaskBlock: React.FC<Props> = ({task, updateState}: Props) => {
+const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
   const onChange = () => {
     console.log("task status changed");
   }
@@ -22,7 +23,7 @@ const TaskBlock: React.FC<Props> = ({task, updateState}: Props) => {
   const onTaskDelete = (taskId: number) => {
     console.log("task deleted");
     deleteTask(taskId);
-    updateState(true);
+    setIsTaskListUpdated(true);
   }
 
   const changeEditMode = () => {
