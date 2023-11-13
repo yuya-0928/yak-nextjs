@@ -18,7 +18,8 @@ const TaskForm = () => {
     DBOpenRequest.onsuccess = () => {
       const taskName = formData.get("taskName");
       if (!taskName) {
-        console.log("no task name")
+        // TODO: エラーメッセージをFormの下に表示する
+        console.error("no task name")
         return;
       }
       addTask(DBOpenRequest, taskName);
