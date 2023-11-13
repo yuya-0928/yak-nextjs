@@ -6,4 +6,4 @@ type TaskListUpdatedContextType = {
 }
 
 export const TaskListUpdatedContext = createContext<TaskListUpdatedContextType>({isTaskListUpdated: false,
-  setIsTaskListUpdated: ()=> {}});
+  setIsTaskListUpdated: ()=> { console.warn('setIsTaskListUpdated was called without a context provider'); }});
