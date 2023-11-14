@@ -3,6 +3,7 @@ import { TaskType } from "../types/TaskType";
 import deleteTask from "../services/indexedDB/deleteTask";
 import { useContext, useEffect, useState } from "react";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
+import updateTaskStatus from "../services/indexedDB/updateTaskStatus";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -16,8 +17,10 @@ type Props = {
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
-  const onChange = () => {
+  const onChangeStatus = (taskId: number) => {
     console.log("task status changed");
+    updateTaskStatus(taskId);
+    setIsTaskListUpdated(true);
   }
 
   const onTaskDelete = (taskId: number) => {
@@ -39,7 +42,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     <>
       {isEditMode === false ? (
         <StyledTaskBlock>
-          <input type="checkbox" onChange={onChange} />
+          <input type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
           <p>TaskId:{task.id}</p>
           <p>TaskName:{task.taskName}</p>
           <p>Status:{task.status}</p>
