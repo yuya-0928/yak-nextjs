@@ -4,6 +4,8 @@ import deleteTask from "../services/indexedDB/deleteTask";
 import { useContext, useEffect, useState } from "react";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 import updateTaskStatus from "../services/indexedDB/updateTaskStatus";
+import updateTaskName from "../services/indexedDB/updateTaskName";
+import accessDB from "../services/indexedDB/accessDB";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -34,6 +36,24 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     setIsEditMode(!isEditMode);
   }
 
+  const onUpdateTaskName = (e: React.FormEvent<HTMLFormElement>, taskId: number) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    
+    const DBOpenRequest = accessDB();
+    DBOpenRequest.onsuccess = () => {
+      const taskName = formData.get("taskName");
+      if(taskName) {
+        updateTaskName(taskId, taskName)
+        setIsTaskListUpdated(true);
+      }
+    }
+    changeEditMode();
+  } 
+
   useEffect(() => {
     console.log(isEditMode);
   }, [isEditMode])
@@ -51,8 +71,10 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
         </StyledTaskBlock>
       ): (
         <StyledTaskBlock>
-          <input type="text" defaultValue={task.taskName} />
-          <button onClick={() => {changeEditMode()}}>Edit</button>
+          <form onSubmit={(e) => {onUpdateTaskName(e, task.id)}}>
+            <input type="text" name="taskName" defaultValue={task.taskName} />
+            <button type="submit">Edit</button>
+          </form>
         </StyledTaskBlock>
       )}
     </>
