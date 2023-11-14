@@ -1,6 +1,6 @@
 export enum TaskStatus {
-  Active = 'Active',
-  Completed = 'Completed',
+  Active = 'active',
+  Completed = 'completed',
 }
 
 export type TaskType = {
