@@ -6,6 +6,7 @@ import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 import updateTaskStatus from "../services/indexedDB/updateTaskStatus";
 import updateTaskName from "../services/indexedDB/updateTaskName";
 import accessDB from "../services/indexedDB/accessDB";
+import { TaskTimerContext } from "../context/TaskTimerContextType";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -19,6 +20,7 @@ type Props = {
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
+  const {currentTaskId, setCurrentTaskId, isRunning, setIsRunning} = useContext(TaskTimerContext);
   const onChangeStatus = (taskId: number) => {
     console.log("task status changed");
     updateTaskStatus(taskId);
@@ -34,6 +36,11 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const changeEditMode = () => {
     console.log("changeEditMode")
     setIsEditMode(!isEditMode);
+  }
+
+  const onTaskStart = (taskId: number) => {
+    setIsRunning(true);
+    setCurrentTaskId(taskId);
   }
 
   const onUpdateTaskName = (e: React.FormEvent<HTMLFormElement>, taskId: number) => {
@@ -68,6 +75,8 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
           <p>Status:{task.status}</p>
           <button onClick={() => {onTaskDelete(task.id)}}>delete</button>
           <button onClick={() => {changeEditMode()}}>Edit</button>
+          {task.id !== currentTaskId && (<button onClick={() => onTaskStart(task.id)}>Start</button>)}
+          {task.id === currentTaskId && isRunning && (<p>着手中</p>)}
         </StyledTaskBlock>
       ): (
         <StyledTaskBlock>
