@@ -6,5 +6,6 @@ export enum TaskStatus {
 export type TaskType = {
   taskName: string;
   status: TaskStatus;
+  elapsed_time: number;
   id: number;
 }

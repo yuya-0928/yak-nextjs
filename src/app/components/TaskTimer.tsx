@@ -1,10 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
 import getTask from "../services/indexedDB/getTask";
+import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 
 const TaskTimer = () => {
   const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
   const [currentTaskName, setCurrentTaskName] = useState<string>("");
+
+  const handlePause = (taskId: number, time: number) => {
+    updateTaskElapsedTime(taskId, time);
+    setCurrentTaskId(null);
+    setIsRunning(false);
+  }
 
   useEffect(() => {
     if(isRunning) {
@@ -16,27 +23,22 @@ const TaskTimer = () => {
   }, [isRunning, setElapsedTime]);
 
   useEffect(() => {
-    if(currentTaskId) {
-      getTaskInfo(currentTaskId);
+    const getTaskInfo = (taskId: number) => {
+      (async () => {
+        try {
+          const task = await getTask(taskId);
+          setCurrentTaskName(task.taskName);
+          setElapsedTime(task.elapsed_time);
+        } catch (err) {
+          console.error(err);
+        }
+      })();
     }
-  }, [currentTaskId]);
-
-  const handlePause = () => {
-    setCurrentTaskId(null);
-    setIsRunning(false);
-  }
-
-  const getTaskInfo = (taskId: number) => {
-    console.log("getTaskInfo");
-    (async () => {
-      try {
-        const task = await getTask(taskId);
-        setCurrentTaskName(task.taskName);
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }
+    
+    if(currentTaskId) {
+      getTaskInfo(currentTaskId);      
+    }
+  }, [currentTaskId, setElapsedTime]);
 
   const seconds = `0${Math.floor(elapsedTime / 1000) % 60}`.slice(-2);
   const minutes = `0${Math.floor(elapsedTime / 60000) % 60}`.slice(-2);
@@ -48,7 +50,7 @@ const TaskTimer = () => {
       <p>TaskId: {currentTaskId}</p>
       <p>TaskName: {currentTaskName}</p>
       <p>{hours}:{minutes}:{seconds}</p>
-      {isRunning && (<button onClick={handlePause}>Pause</button>)}
+      {isRunning && currentTaskId && (<button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</button>)}
     </div>
   )
 }
