@@ -4,11 +4,11 @@ import deleteTask from "../services/indexedDB/deleteTask";
 import { useContext, useEffect, useState } from "react";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 import updateTaskStatus from "../services/indexedDB/updateTaskStatus";
-import updateTaskName from "../services/indexedDB/updateTaskName";
 import accessDB from "../services/indexedDB/accessDB";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
+import updateTaskInfo from "../services/indexedDB/updateTaskName";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -49,7 +49,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     setCurrentTaskId(taskId);
   }
 
-  const onUpdateTaskName = (e: React.FormEvent<HTMLFormElement>, taskId: number) => {
+  const onUpdateTaskInfo = (e: React.FormEvent<HTMLFormElement>, taskId: number) => {
     e.preventDefault();
 
     const form = e.currentTarget;
@@ -59,8 +59,9 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     const DBOpenRequest = accessDB();
     DBOpenRequest.onsuccess = () => {
       const taskName = formData.get("taskName");
-      if(taskName) {
-        updateTaskName(taskId, taskName)
+      const deadline = formData.get("deadline");
+      if(taskName || deadline) {
+        updateTaskInfo(taskId, taskName, deadline)
         setIsTaskListUpdated(true);
       }
     }
@@ -80,6 +81,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
           <p>TaskName:{task.taskName}</p>
           <p>Status:{task.status}</p>
           <p>経過時間：{convertMsTime(task.elapsed_time)}</p>
+          <p>期限：{task.deadline ? task.deadline : 'なし'}</p>
           <button onClick={() => {onTaskDelete(task.id)}}>delete</button>
           <button onClick={() => {changeEditMode()}}>Edit</button>
           {task.id !== currentTaskId && (<button onClick={() => onTaskStart(task.id)}>Start</button>)}
@@ -87,8 +89,9 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
         </StyledTaskBlock>
       ): (
         <StyledTaskBlock>
-          <form onSubmit={(e) => {onUpdateTaskName(e, task.id)}}>
+          <form onSubmit={(e) => {onUpdateTaskInfo(e, task.id)}}>
             <input type="text" name="taskName" defaultValue={task.taskName} />
+            <input type="date" name="deadline"  />
             <button type="submit">Edit</button>
           </form>
         </StyledTaskBlock>
