@@ -44,6 +44,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     setIsRunning(true);
     if(currentTaskId){
       updateTaskElapsedTime(currentTaskId, elapsedTime);
+      setIsTaskListUpdated(true);
     }
     setCurrentTaskId(taskId);
   }
