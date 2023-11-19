@@ -1,6 +1,6 @@
 import accessDB from "./accessDB";
 
-const updateTaskName = (taskId: number, updateTaskName: FormDataEntryValue) => {
+const updateTaskInfo = (taskId: number, updateTaskName: FormDataEntryValue | null, deadline: FormDataEntryValue | null) => {
   const DBOpenRequest = accessDB();
 
   DBOpenRequest.onsuccess = () => {
@@ -10,6 +10,7 @@ const updateTaskName = (taskId: number, updateTaskName: FormDataEntryValue) => {
     objectStoreTaskRequest.onsuccess = () => {
       const data = objectStoreTaskRequest.result;
       data.taskName = updateTaskName;
+      data.deadline = deadline;
       const updateTaskRequest = objectStore.put(data);
 
       updateTaskRequest.onsuccess = () => {
@@ -19,4 +20,4 @@ const updateTaskName = (taskId: number, updateTaskName: FormDataEntryValue) => {
   }
 }
 
-export default updateTaskName;
+export default updateTaskInfo;
