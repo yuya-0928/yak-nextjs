@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
 import getTask from "../services/indexedDB/getTask";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
+import convertMsTime from "../helper/convertMsTime";
 
 const TaskTimer = () => {
   const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
@@ -40,16 +41,12 @@ const TaskTimer = () => {
     }
   }, [currentTaskId, setElapsedTime]);
 
-  const seconds = `0${Math.floor(elapsedTime / 1000) % 60}`.slice(-2);
-  const minutes = `0${Math.floor(elapsedTime / 60000) % 60}`.slice(-2);
-  const hours = `0${Math.floor(elapsedTime / 3600000)}`.slice(-2);
-
   return (
     <div>
       <h1>Task Timer</h1>
       <p>TaskId: {currentTaskId}</p>
       <p>TaskName: {currentTaskName}</p>
-      <p>{hours}:{minutes}:{seconds}</p>
+      <p>{convertMsTime(elapsedTime)}</p>
       {isRunning && currentTaskId && (<button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</button>)}
     </div>
   )

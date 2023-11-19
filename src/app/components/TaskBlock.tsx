@@ -8,6 +8,7 @@ import updateTaskName from "../services/indexedDB/updateTaskName";
 import accessDB from "../services/indexedDB/accessDB";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
+import convertMsTime from "../helper/convertMsTime";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -77,6 +78,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
           <p>TaskId:{task.id}</p>
           <p>TaskName:{task.taskName}</p>
           <p>Status:{task.status}</p>
+          <p>経過時間：{convertMsTime(task.elapsed_time)}</p>
           <button onClick={() => {onTaskDelete(task.id)}}>delete</button>
           <button onClick={() => {changeEditMode()}}>Edit</button>
           {task.id !== currentTaskId && (<button onClick={() => onTaskStart(task.id)}>Start</button>)}
