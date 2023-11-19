@@ -7,6 +7,7 @@ import updateTaskStatus from "../services/indexedDB/updateTaskStatus";
 import updateTaskName from "../services/indexedDB/updateTaskName";
 import accessDB from "../services/indexedDB/accessDB";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
+import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -20,7 +21,7 @@ type Props = {
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
-  const {currentTaskId, setCurrentTaskId, isRunning, setIsRunning} = useContext(TaskTimerContext);
+  const {currentTaskId, setCurrentTaskId, isRunning, setIsRunning, elapsedTime} = useContext(TaskTimerContext);
   const onChangeStatus = (taskId: number) => {
     console.log("task status changed");
     updateTaskStatus(taskId);
@@ -40,6 +41,9 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
 
   const onTaskStart = (taskId: number) => {
     setIsRunning(true);
+    if(currentTaskId){
+      updateTaskElapsedTime(currentTaskId, elapsedTime);
+    }
     setCurrentTaskId(taskId);
   }
 

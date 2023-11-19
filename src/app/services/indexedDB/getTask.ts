@@ -3,7 +3,6 @@ import accessDB from "./accessDB";
 
 const getTask = (taskId: number) => {
   return new Promise<TaskType>((resolve, reject) => {
-    console.log("getTask.ts: getTask()")
     const DBOpenRequest = accessDB();
   
     DBOpenRequest.onsuccess = () => {

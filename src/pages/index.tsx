@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react';
-import TaskForm from './components/TaskForm'
-import TaskList from './components/TaskList'
-import TaskTimer from './components/TaskTimer';
-import { TaskListUpdatedContext } from './context/TaskListUpdatedContext';
-import { TaskTimerContext } from './context/TaskTimerContextType';
+import TaskForm from '../app/components/TaskForm'
+import TaskList from '../app/components/TaskList'
+import TaskTimer from '../app/components/TaskTimer';
+import { TaskListUpdatedContext } from '../app/context/TaskListUpdatedContext';
+import { TaskTimerContext } from '../app/context/TaskTimerContextType';
 
 export default function Home() {
   const [isTaskListUpdated, setIsTaskListUpdated] = useState(false);
