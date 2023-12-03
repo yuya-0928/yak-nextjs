@@ -1,7 +1,4 @@
-export enum TaskStatus {
-  Active = 'active',
-  Completed = 'completed',
-}
+export type TaskStatus = 'active' | 'completed';
 
 export type TaskType = {
   taskName: string;
