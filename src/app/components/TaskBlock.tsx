@@ -9,6 +9,7 @@ import { TaskTimerContext } from "../context/TaskTimerContextType";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import updateTaskInfo from "../services/indexedDB/updateTaskName";
+import { Card, CardBody } from "@chakra-ui/react";
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -73,7 +74,8 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
   }, [isEditMode])
 
   return (
-    <>
+    <Card variant='elevated'>
+      <CardBody>
       {isEditMode === false ? (
         <StyledTaskBlock>
           <input type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
@@ -96,7 +98,8 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
           </form>
         </StyledTaskBlock>
       )}
-    </>
+      </CardBody>
+    </Card>
   )
 }
 
