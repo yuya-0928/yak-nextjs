@@ -9,7 +9,8 @@ import { TaskTimerContext } from "../context/TaskTimerContextType";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import updateTaskInfo from "../services/indexedDB/updateTaskName";
-import { Card, CardBody } from "@chakra-ui/react";
+import { Button, Checkbox, Divider, Flex, Input, Spacer, Text } from "@chakra-ui/react";
+import { PhoneIcon, AddIcon, WarningIcon, DeleteIcon, EditIcon, TimeIcon, CalendarIcon, SpinnerIcon } from '@chakra-ui/icons'
 
 const StyledTaskBlock = styled('div')`
   display: flex;
@@ -74,32 +75,38 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
   }, [isEditMode])
 
   return (
-    <Card variant='elevated'>
-      <CardBody>
+    <>
       {isEditMode === false ? (
         <StyledTaskBlock>
-          <input type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
-          <p>TaskId:{task.id}</p>
-          <p>TaskName:{task.taskName}</p>
-          <p>Status:{task.status}</p>
-          <p>経過時間：{convertMsTime(task.elapsed_time)}</p>
-          <p>期限：{task.deadline ? task.deadline : 'なし'}</p>
-          <button onClick={() => {onTaskDelete(task.id)}}>delete</button>
-          <button onClick={() => {changeEditMode()}}>Edit</button>
-          {task.id !== currentTaskId && (<button onClick={() => onTaskStart(task.id)}>Start</button>)}
-          {task.id === currentTaskId && isRunning && (<p>着手中</p>)}
+          <Flex alignItems='center' gap='3'>
+            <Checkbox type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
+            <Spacer />
+            <Text>{task.taskName}</Text>
+            <Spacer />
+            <Text><TimeIcon /> {convertMsTime(task.elapsed_time)}</Text>
+            <Spacer />
+            <Text><CalendarIcon />{task.deadline ? task.deadline : 'なし'}</Text>
+            <Spacer />
+            <Button onClick={() => {onTaskDelete(task.id)}}><DeleteIcon /></Button>
+            <Spacer />
+            <Button onClick={() => {changeEditMode()}}><EditIcon /></Button>
+            <Spacer />
+            <Button onClick={() => onTaskStart(task.id)} isDisabled={task.id === currentTaskId && isRunning}><TimeIcon /></Button>
+          </Flex>
         </StyledTaskBlock>
       ): (
         <StyledTaskBlock>
           <form onSubmit={(e) => {onUpdateTaskInfo(e, task.id)}}>
-            <input type="text" name="taskName" defaultValue={task.taskName} />
-            <input type="date" name="deadline"  />
-            <button type="submit">Edit</button>
+            <Flex alignItems='center' gap='3'>
+                <Input type="text" name="taskName" defaultValue={task.taskName} />
+                <input type="date" name="deadline"  />
+                <Button type="submit">Edit</Button>
+            </Flex>
           </form>
         </StyledTaskBlock>
       )}
-      </CardBody>
-    </Card>
+      <Divider />
+    </>
   )
 }
 
