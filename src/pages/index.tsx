@@ -5,6 +5,7 @@ import TaskList from '../app/components/TaskList'
 import TaskTimer from '../app/components/TaskTimer';
 import { TaskListUpdatedContext } from '../app/context/TaskListUpdatedContext';
 import { TaskTimerContext } from '../app/context/TaskTimerContextType';
+import { ChakraProvider } from '@chakra-ui/react'
 
 export default function Home() {
   const [isTaskListUpdated, setIsTaskListUpdated] = useState(false);
@@ -15,9 +16,11 @@ export default function Home() {
   return (
     <TaskListUpdatedContext.Provider value={{isTaskListUpdated, setIsTaskListUpdated}}>
       <TaskTimerContext.Provider value={{currentTaskId, setCurrentTaskId, isRunning, setIsRunning, elapsedTime, setElapsedTime}}>
-        <TaskTimer />
-        <TaskForm />
-        <TaskList />
+        <ChakraProvider>
+          <TaskTimer />
+          <TaskForm />
+          <TaskList />
+        </ChakraProvider>
       </TaskTimerContext.Provider>
     </TaskListUpdatedContext.Provider>
   )
