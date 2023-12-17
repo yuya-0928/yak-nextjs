@@ -21,10 +21,6 @@ const StyledTaskBlock = styled('div')`
   gap: 10px;
 `;
 
-const CheckBoxArea = styled('div')``;
-
-const TaskNameArea = styled('div')``;
-
 
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -85,9 +81,9 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
         <StyledTaskBlock>
           <Flex alignItems='center' gap='3'>
             <Checkbox type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
-            <TaskNameArea>
+            <Box>
               <Text>{task.taskName}</Text>
-            </TaskNameArea>
+            </Box>
             <IconButton aria-label="Edit Task" icon={<EditIcon />} onClick={() => {changeEditMode()}}></IconButton>
             <IconButton aria-label="Task Timer" icon={<TimeIcon />} onClick={() => onTaskStart(task.id)} isDisabled={task.id === currentTaskId && isRunning}></IconButton>
             <IconButton aria-label="Delete Task" icon={<DeleteIcon />} onClick={() => {onTaskDelete(task.id)}}></IconButton>
