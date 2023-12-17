@@ -1,0 +1,43 @@
+language: "jp"
+early_access: false
+reviews:
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_walkthrough: false
+  path_filters:
+    - "!**/.xml"
+  path_instructions:
+    - path: "**/*.{ts,tsx,js,jsx}"
+      instructions: |
+        "フロントエンドのコーディングに関する勉強が主目的のリポジトリのため、レビュー内容は学習を促すことに重点を置いてください。
+        主に以下についてなるべく詳しく指摘をしてください。
+        - 可読性の高いコードの書き方について
+        - コンポーネントの粒度について
+        - ロジックの切り出しについて
+        - テスタビリティについて
+        - アクセシビリティについて
+        - パフォーマンスについて"
+    - path: "**/*.{test,spec}.{ts,tsx,js,jsx}"
+      instructions: |
+        "フロントエンドのコーディングに関する勉強が主目的のリポジトリのため、レビュー内容は学習を促すことに重点を置いてください。
+        主に以下についてなるべく詳しく指摘をしてください。
+        - テストケースの設計について
+        - テストの書き方について"
+    - path: "**/*.{story,stories}.{ts,tsx,js,jsx}"
+      instructions: |
+        "フロントエンドのコーディングに関する勉強が主目的のリポジトリのため、レビュー内容は学習を促すことに重点を置いてください。
+        主に以下についてなるべく詳しく指摘をしてください。
+        - Storybookの使い方について
+        - コンポーネントの粒度について"
+  auto_review:
+    enabled: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+    drafts: false
+    base_branches:
+      - "develop"
+      - "feature/*"
+chat:
+  auto_reply: false
