@@ -59,7 +59,3 @@ const TaskTimer = () => {
 }
 
 export default TaskTimer;
-
-function setIsTaskListUpdated(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
