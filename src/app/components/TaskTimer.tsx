@@ -4,6 +4,7 @@ import getTask from "../services/indexedDB/getTask";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
+import { Box, Button, Text } from "@chakra-ui/react";
 
 const TaskTimer = () => {
   const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
@@ -45,13 +46,11 @@ const TaskTimer = () => {
   }, [currentTaskId, setElapsedTime]);
 
   return (
-    <div>
-      <h1>Task Timer</h1>
-      <p>TaskId: {currentTaskId}</p>
-      <p>TaskName: {currentTaskName}</p>
-      <p>{convertMsTime(elapsedTime)}</p>
-      {isRunning && currentTaskId && (<button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</button>)}
-    </div>
+    <Box>
+      <Text>着手中のタスク: {currentTaskName}</Text>
+      <Text>{convertMsTime(elapsedTime)}</Text>
+      {isRunning && currentTaskId && (<Button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</Button>)}
+    </Box>
   )
 }
 
