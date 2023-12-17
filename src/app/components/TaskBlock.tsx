@@ -9,17 +9,22 @@ import { TaskTimerContext } from "../context/TaskTimerContextType";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import updateTaskInfo from "../services/indexedDB/updateTaskName";
-import { Button, Checkbox, Divider, Flex, Input, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Divider, Flex, FormControl, IconButton, Input, Spacer, Text } from "@chakra-ui/react";
 import { PhoneIcon, AddIcon, WarningIcon, DeleteIcon, EditIcon, TimeIcon, CalendarIcon, SpinnerIcon } from '@chakra-ui/icons'
 
-const StyledTaskBlock = styled('div')`
-  display: flex;
-  gap: 10px;
-`;
 
 type Props = {
   task: TaskType;
 }
+
+const StyledTaskBlock = styled('div')`
+  gap: 10px;
+`;
+
+const CheckBoxArea = styled('div')``;
+
+const TaskNameArea = styled('div')``;
+
 
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -80,32 +85,32 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
         <StyledTaskBlock>
           <Flex alignItems='center' gap='3'>
             <Checkbox type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
-            <Spacer />
-            <Text>{task.taskName}</Text>
-            <Spacer />
-            <Text><TimeIcon /> {convertMsTime(task.elapsed_time)}</Text>
-            <Spacer />
-            <Text><CalendarIcon />{task.deadline ? task.deadline : 'なし'}</Text>
-            <Spacer />
-            <Button onClick={() => {onTaskDelete(task.id)}}><DeleteIcon /></Button>
-            <Spacer />
-            <Button onClick={() => {changeEditMode()}}><EditIcon /></Button>
-            <Spacer />
-            <Button onClick={() => onTaskStart(task.id)} isDisabled={task.id === currentTaskId && isRunning}><TimeIcon /></Button>
+            <TaskNameArea>
+              <Text>{task.taskName}</Text>
+            </TaskNameArea>
+            <IconButton aria-label="Edit Task" icon={<EditIcon />} onClick={() => {changeEditMode()}}></IconButton>
+            <IconButton aria-label="Task Timer" icon={<TimeIcon />} onClick={() => onTaskStart(task.id)} isDisabled={task.id === currentTaskId && isRunning}></IconButton>
+            <IconButton aria-label="Delete Task" icon={<DeleteIcon />} onClick={() => {onTaskDelete(task.id)}}></IconButton>
           </Flex>
+          <Box>
+            <Flex alignItems='center' gap='3'>
+              {task.elapsed_time !== 0 && (<Text><TimeIcon /> {convertMsTime(task.elapsed_time)}</Text>)}
+              {task.deadline && <Text><CalendarIcon />{task.deadline}</Text> }
+            </Flex>
+          </Box>
         </StyledTaskBlock>
       ): (
         <StyledTaskBlock>
           <form onSubmit={(e) => {onUpdateTaskInfo(e, task.id)}}>
+            <Input type="text" name="taskName" defaultValue={task.taskName} />
             <Flex alignItems='center' gap='3'>
-                <Input type="text" name="taskName" defaultValue={task.taskName} />
                 <input type="date" name="deadline"  />
-                <Button type="submit">Edit</Button>
+                <Button type="submit">保存</Button>
             </Flex>
           </form>
         </StyledTaskBlock>
       )}
-      <Divider />
+      <Divider colorScheme="gray" />
     </>
   )
 }
