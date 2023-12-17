@@ -5,22 +5,26 @@ import TaskList from '../app/components/TaskList'
 import TaskTimer from '../app/components/TaskTimer';
 import { TaskListUpdatedContext } from '../app/context/TaskListUpdatedContext';
 import { TaskTimerContext } from '../app/context/TaskTimerContextType';
-import { ChakraProvider } from '@chakra-ui/react'
+import { Button, Container, useColorMode } from '@chakra-ui/react'
 
 export default function Home() {
   const [isTaskListUpdated, setIsTaskListUpdated] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const { colorMode, toggleColorMode } = useColorMode()
   
   return (
     <TaskListUpdatedContext.Provider value={{isTaskListUpdated, setIsTaskListUpdated}}>
       <TaskTimerContext.Provider value={{currentTaskId, setCurrentTaskId, isRunning, setIsRunning, elapsedTime, setElapsedTime}}>
-        <ChakraProvider>
+        <Container>
+          <Button onClick={toggleColorMode}>
+            Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+          </Button>
           <TaskTimer />
           <TaskForm />
           <TaskList />
-        </ChakraProvider>
+        </Container>
       </TaskTimerContext.Provider>
     </TaskListUpdatedContext.Provider>
   )
