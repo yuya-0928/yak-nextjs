@@ -4,7 +4,7 @@ import getTask from "../services/indexedDB/getTask";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 
 const TaskTimer = () => {
   const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
@@ -47,15 +47,15 @@ const TaskTimer = () => {
 
   return (
     <Box>
-      <Text>着手中のタスク: {currentTaskName}</Text>
-      <Text>{convertMsTime(elapsedTime)}</Text>
-      {isRunning && currentTaskId && (<Button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</Button>)}
+      <Flex align="center" justify='space-between'>
+        <Text>{currentTaskName ? (currentTaskName) : ("タスクを選択して計測を開始")}</Text>
+        <Flex align="center" gap={3}>
+          <Text>{convertMsTime(elapsedTime)}</Text>
+          {isRunning && currentTaskId && (<Button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</Button>)}
+        </Flex>
+      </Flex>
     </Box>
   )
 }
 
 export default TaskTimer;
-
-function setIsTaskListUpdated(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
