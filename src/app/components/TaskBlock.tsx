@@ -10,6 +10,7 @@ import convertMsTime from "../helper/convertMsTime";
 import updateTaskInfo from "../services/indexedDB/updateTaskName";
 import { Box, Button, Checkbox, Flex, IconButton, Input, Text } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon, TimeIcon, CalendarIcon } from '@chakra-ui/icons'
+import updateTaskStartTime from "../services/indexedDB/updateTaskStartTime";
 
 
 type Props = {
@@ -39,6 +40,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
 
   const onTaskStart = (taskId: number) => {
     setIsRunning(true);
+    updateTaskStartTime(taskId, Date.now())
     if(currentTaskId){
       updateTaskElapsedTime(currentTaskId, elapsedTime);
       setIsTaskListUpdated(true);
