@@ -5,19 +5,20 @@ import TaskList from '../app/components/TaskList'
 import TaskTimer from '../app/components/TaskTimer';
 import { TaskListUpdatedContext } from '../app/context/TaskListUpdatedContext';
 import { TaskTimerContext } from '../app/context/TaskTimerContextType';
-import { Button, Container, IconButton, useColorMode } from '@chakra-ui/react'
+import { Container, IconButton, useColorMode } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { TaskType } from '@/app/types/TaskType';
 
 export default function Home() {
   const [isTaskListUpdated, setIsTaskListUpdated] = useState(false);
-  const [currentTaskId, setCurrentTaskId] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [currentTask, setCurrentTask] = useState<TaskType | null>(null);
   const { colorMode, toggleColorMode } = useColorMode()
   
   return (
     <TaskListUpdatedContext.Provider value={{isTaskListUpdated, setIsTaskListUpdated}}>
-      <TaskTimerContext.Provider value={{currentTaskId, setCurrentTaskId, isRunning, setIsRunning, elapsedTime, setElapsedTime}}>
+      <TaskTimerContext.Provider value={{currentTask, setCurrentTask, isRunning, setIsRunning, elapsedTime, setElapsedTime}}>
         <Container>
           <IconButton onClick={toggleColorMode} aria-label='Toggle dark mode' icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon /> } />
           <TaskTimer />

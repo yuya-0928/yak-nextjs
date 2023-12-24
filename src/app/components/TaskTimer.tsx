@@ -1,22 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
-import getTask from "../services/indexedDB/getTask";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { TaskType } from "../types/TaskType";
 
 const TaskTimer = () => {
-  const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
-  const [currentTask, setCurrentTask] = useState<TaskType | null>(null);
-  const [currentTaskName, setCurrentTaskName] = useState<string>("");
+  const {isRunning, setIsRunning, currentTask, setCurrentTask} = useContext(TaskTimerContext);
+  const [elapsedTime, setElapsedTime]=useState(0);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
 
-
   const handlePause = (taskId: number, time: number) => {
+    // TODO: タスクを一時停止したら、currentTaskからデータを削除する
     updateTaskElapsedTime(taskId, time);
-    setCurrentTaskId(null);
+    setCurrentTask(null);
     setIsRunning(false);
     setIsTaskListUpdated(true);
   }
@@ -33,31 +30,16 @@ const TaskTimer = () => {
   }, [currentTask, isRunning, setElapsedTime]);
 
   useEffect(() => {
-    const getTaskInfo = (taskId: number) => {
-      (async () => {
-        try {
-          const task = await getTask(taskId);
-          setCurrentTask(task);
-          setCurrentTaskName(task.taskName);
-          setElapsedTime(task.elapsed_time);
-        } catch (err) {
-          console.error(err);
-        }
-      })();
-    }
-    
-    if(currentTaskId) {
-      getTaskInfo(currentTaskId);      
-    }
-  }, [currentTaskId, setElapsedTime]);
+    // TODO：初回読み込み時にcurrentTaskにデータがあったら、stateにcurrentTaskの情報を元にタスクのデータを入れる
+  }, []);
 
   return (
     <Box>
       <Flex align="center" justify='space-between'>
-        <Text>{currentTaskName ? (currentTaskName) : ("タスクを選択して計測を開始")}</Text>
+        <Text>{currentTask ? (currentTask.taskName) : ("タスクを選択して計測を開始")}</Text>
         <Flex align="center" gap={3}>
           <Text>{convertMsTime(elapsedTime)}</Text>
-          {isRunning && currentTaskId && (<Button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</Button>)}
+          {isRunning && currentTask && (<Button onClick={() => handlePause(currentTask.id, elapsedTime)}>Pause</Button>)}
         </Flex>
       </Flex>
     </Box>
