@@ -1,13 +1,13 @@
 import accessDB from "./accessDB";
 
-const getCurrentTask = (taskId: number) => {
+const getCurrentTask = () => {
   return new Promise<{taskId: number, startedAt: number}>((resolve, reject) => {
     const DBOpenRequest = accessDB();
   
     DBOpenRequest.onsuccess = () => {
       const db = DBOpenRequest.result;
       const objectStore = db.transaction(["currentTask"], "readwrite").objectStore('currentTask');
-      const objectStoreTaskRequest = objectStore.get(taskId);
+      const objectStoreTaskRequest = objectStore.get("currentTask");
       objectStoreTaskRequest.onsuccess = () => {
         resolve(objectStoreTaskRequest.result);
         db.close();

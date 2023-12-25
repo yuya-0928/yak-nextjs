@@ -84,7 +84,6 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
               <Checkbox type="checkbox" onChange={() => {onChangeStatus(task.id)}} />
               <Box>
                 <Text>{task.taskName}</Text>
-                <p>{task.start_at}</p>
               </Box>
             </Flex>
             <Flex align="center" gap='3'>
@@ -94,7 +93,7 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
             </Flex>
           </Flex>
           <Flex alignItems='center' gap='2'>
-            {task.elapsed_time !== 0 && (<Text><TimeIcon /> {convertMsTime(task.elapsed_time)}</Text>)}
+            {task.elapsedTime !== 0 && (<Text><TimeIcon /> {convertMsTime(task.elapsedTime)}</Text>)}
             {task.deadline && <Text><CalendarIcon />{task.deadline}</Text> }
           </Flex>
         </Box>
