@@ -9,7 +9,7 @@ const updateTaskElapsedTime = (taskId: number, time: number) => {
     const objectStoreTaskRequest = objectStore.get(taskId);
     objectStoreTaskRequest.onsuccess = () => {
       const data = objectStoreTaskRequest.result;
-      data.elapsed_time = time;
+      data.elapsedTime = time;
       const updateTaskRequest = objectStore.put(data);
 
       updateTaskRequest.onsuccess = () => {

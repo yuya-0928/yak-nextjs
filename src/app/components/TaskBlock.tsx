@@ -10,8 +10,8 @@ import convertMsTime from "../helper/convertMsTime";
 import updateTaskInfo from "../services/indexedDB/updateTaskName";
 import { Box, Button, Checkbox, Flex, IconButton, Input, Text } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon, TimeIcon, CalendarIcon } from '@chakra-ui/icons'
-import updateTaskStartTime from "../services/indexedDB/updateTaskStartTime";
-
+import getTask from "../services/indexedDB/getTask";
+import updateCurrentTask from "../services/indexedDB/updateCurrentTask";
 
 type Props = {
   task: TaskType;
@@ -20,7 +20,8 @@ type Props = {
 const TaskBlock: React.FC<Props> = ({task}: Props) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
-  const {currentTaskId, setCurrentTaskId, isRunning, setIsRunning, elapsedTime} = useContext(TaskTimerContext);
+  const {currentTask, setCurrentTask, isRunning, setIsRunning, elapsedTime} = useContext(TaskTimerContext);
+  
   const onChangeStatus = (taskId: number) => {
     console.log("task status changed");
     updateTaskStatus(taskId);
@@ -38,14 +39,18 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
     setIsEditMode(!isEditMode);
   }
 
-  const onTaskStart = (taskId: number) => {
+  const onTaskStart = async (taskId: number) => {
+    console.log("task started");
+    updateCurrentTask(taskId);
+    // updateTaskStartTime(taskId, Date.now());
+    // TODO: エラーハンドリング
+    const task = await getTask(taskId);
     setIsRunning(true);
-    updateTaskStartTime(taskId, Date.now())
-    if(currentTaskId){
-      updateTaskElapsedTime(currentTaskId, elapsedTime);
+    if(currentTask){
+      updateTaskElapsedTime(currentTask.id, elapsedTime);
       setIsTaskListUpdated(true);
     }
-    setCurrentTaskId(taskId);
+    setCurrentTask(task);
   }
 
   const onUpdateTaskInfo = (e: React.FormEvent<HTMLFormElement>, taskId: number) => {
@@ -53,7 +58,6 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-
     
     const DBOpenRequest = accessDB();
     DBOpenRequest.onsuccess = () => {
@@ -84,12 +88,12 @@ const TaskBlock: React.FC<Props> = ({task}: Props) => {
             </Flex>
             <Flex align="center" gap='3'>
               <IconButton aria-label="Edit Task" icon={<EditIcon />} onClick={() => {changeEditMode()}}></IconButton>
-              <IconButton aria-label="Task Timer" icon={<TimeIcon />} onClick={() => onTaskStart(task.id)} isDisabled={task.id === currentTaskId && isRunning}></IconButton>
+              <IconButton aria-label="Task Timer" icon={<TimeIcon />} onClick={() => onTaskStart(task.id)} isDisabled={isRunning && currentTask !== null && currentTask.id === task.id }></IconButton>
               <IconButton aria-label="Delete Task" icon={<DeleteIcon />} onClick={() => {onTaskDelete(task.id)}}></IconButton>
             </Flex>
           </Flex>
           <Flex alignItems='center' gap='2'>
-            {task.elapsed_time !== 0 && (<Text><TimeIcon /> {convertMsTime(task.elapsed_time)}</Text>)}
+            {task.elapsedTime !== 0 && (<Text><TimeIcon /> {convertMsTime(task.elapsedTime)}</Text>)}
             {task.deadline && <Text><CalendarIcon />{task.deadline}</Text> }
           </Flex>
         </Box>

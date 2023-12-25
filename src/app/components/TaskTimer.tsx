@@ -1,63 +1,66 @@
 import { useContext, useEffect, useState } from "react";
 import { TaskTimerContext } from "../context/TaskTimerContextType";
-import getTask from "../services/indexedDB/getTask";
 import updateTaskElapsedTime from "../services/indexedDB/updateTaskElapsedTime";
 import convertMsTime from "../helper/convertMsTime";
 import { TaskListUpdatedContext } from "../context/TaskListUpdatedContext";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { TaskType } from "../types/TaskType";
+import deleteCurrentTask from "../services/indexedDB/deleteCurrentTask";
+import getCurrentTask from "../services/indexedDB/getCurrentTask";
+import getTask from "../services/indexedDB/getTask";
 
 const TaskTimer = () => {
-  const {isRunning, setIsRunning, currentTaskId, setCurrentTaskId, elapsedTime, setElapsedTime} = useContext(TaskTimerContext);
-  const [currentTask, setCurrentTask] = useState<TaskType | null>(null);
-  const [currentTaskName, setCurrentTaskName] = useState<string>("");
+  const {isRunning, setIsRunning, currentTask, setCurrentTask} = useContext(TaskTimerContext);
+  const [elapsedTime, setElapsedTime]=useState(0);
+  const [currentTaskStartedAt, setCurrentTaskStartedAt] = useState<number>(0);
   const {setIsTaskListUpdated} = useContext(TaskListUpdatedContext);
 
-
   const handlePause = (taskId: number, time: number) => {
+    deleteCurrentTask();
     updateTaskElapsedTime(taskId, time);
-    setCurrentTaskId(null);
+    setCurrentTask(null);
+    setElapsedTime(0);
     setIsRunning(false);
     setIsTaskListUpdated(true);
   }
 
+  const getCurrentTaskStartedAt = async() => {
+    const currentTask = await getCurrentTask();
+    if(currentTask){
+      setCurrentTaskStartedAt(currentTask.startedAt);
+    }
+  };
+  getCurrentTaskStartedAt();
+
   useEffect(() => {
     if(isRunning && currentTask) {
-      const interval = setInterval(() => {
-        if(currentTask.start_at !== null){
-          setElapsedTime(Date.now() - currentTask.start_at + currentTask.elapsed_time);
+      const interval = setInterval(async () => {
+        if(currentTaskStartedAt){
+          setElapsedTime(Date.now() - currentTaskStartedAt + currentTask.elapsedTime);
         }
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [currentTask, isRunning, setElapsedTime]);
+  }, [currentTask, currentTaskStartedAt, isRunning, setElapsedTime]);
 
   useEffect(() => {
-    const getTaskInfo = (taskId: number) => {
-      (async () => {
-        try {
-          const task = await getTask(taskId);
-          setCurrentTask(task);
-          setCurrentTaskName(task.taskName);
-          setElapsedTime(task.elapsed_time);
-        } catch (err) {
-          console.error(err);
-        }
-      })();
+    const getCurrentTaskFromDB = async() => {
+      const currentTaskInfo = await getCurrentTask();
+      if(currentTaskInfo) {
+        const currentTask = await getTask(currentTaskInfo.taskId);
+        setCurrentTask(currentTask);
+        setIsRunning(true);
+      }
     }
-    
-    if(currentTaskId) {
-      getTaskInfo(currentTaskId);      
-    }
-  }, [currentTaskId, setElapsedTime]);
+    getCurrentTaskFromDB();
+  }, [setCurrentTask, setIsRunning])
 
   return (
     <Box>
       <Flex align="center" justify='space-between'>
-        <Text>{currentTaskName ? (currentTaskName) : ("タスクを選択して計測を開始")}</Text>
+        <Text>{currentTask ? (currentTask.taskName) : ("タスクを選択して計測を開始")}</Text>
         <Flex align="center" gap={3}>
           <Text>{convertMsTime(elapsedTime)}</Text>
-          {isRunning && currentTaskId && (<Button onClick={() => handlePause(currentTaskId, elapsedTime)}>Pause</Button>)}
+          {isRunning && currentTask && (<Button onClick={() => handlePause(currentTask.id, elapsedTime)}>Pause</Button>)}
         </Flex>
       </Flex>
     </Box>
